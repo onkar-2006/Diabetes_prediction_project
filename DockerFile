@@ -1,0 +1,24 @@
+# 1. Use Python 3.10 to match your local environment
+FROM python:3.10-slim
+
+# 2. Set the main working directory
+WORKDIR /app
+
+# 3. Copy and install requirements first (for better caching)
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 4. Copy the folders as they are in your project
+# This recreates /app/Backend and /app/model inside Docker
+COPY Backend/ ./Backend/
+COPY model/ ./model/
+
+# 5. Move into the Backend folder so Uvicorn can find main.py
+WORKDIR /app/Backend
+
+# 6. Expose the port
+EXPOSE 8000
+
+# 7. Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
